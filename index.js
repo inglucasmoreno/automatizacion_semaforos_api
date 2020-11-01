@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
+app.use('/api/auth', require('./routes/auth.routes'));
 
 // [Ejecucion de servidor]
 app.listen(port, () => {

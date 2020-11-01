@@ -13,5 +13,4 @@ router.post('/', nuevoUsuario);
 router.put('/:id', actualizarUsuario);
 router.delete('/:id', eliminarUsuario);
 
-
 module.exports = router;

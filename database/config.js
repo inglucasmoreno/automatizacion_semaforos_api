@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const dbConnection = async () => {
     try{
-        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/control_stock',{
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/automatizacion_semaforos',{
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true            

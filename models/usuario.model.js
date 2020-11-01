@@ -29,6 +29,7 @@ const usuarioSchema = Schema({
 
     email: {
         type: String,
+        required: true,
         trim: true,
         unique: true
     },
