@@ -6,7 +6,8 @@ const dbConnection = async () => {
         await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/automatizacion_semaforos',{
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true            
+            useCreateIndex: true,
+            useFindAndModify: false            
         });
         console.log(chalk.blue('[MongoDB]') + ' - DB conectada correctamente');
     }catch(error){

@@ -37,6 +37,11 @@ const usuarioSchema = Schema({
     role: {
        type: String,
        default: 'USER_ROLE'
+    },
+    
+    activo: {
+        type: String,
+        default: true
     }
 
 });

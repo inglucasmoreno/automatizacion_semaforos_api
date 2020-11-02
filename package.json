@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "sistema de stock basico",
+  "description": "Backend - Sistema de automatizacion de semaforos",
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon index.js",

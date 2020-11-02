@@ -22,8 +22,9 @@ app.get('/', (req, res) => {
     res.json({ Welcome: 'Bienvenidos al servidor!!' })
 })
 
-app.use('/api/usuarios', require('./routes/usuarios.routes'));
 app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/usuarios', require('./routes/usuarios.routes'));
+app.use('/api/semaforos', require('./routes/semaforos.routes'));
 
 // [Ejecucion de servidor]
 app.listen(port, () => {
