@@ -12,11 +12,11 @@ const login = async (req, res) => {
 
         // Se verifica el DNI
         const usuarioDB = await Usuario.findOne({dni});
-        if(!usuarioDB) return error(res, 400, 'Datos incorrectos');
+        if(!usuarioDB) return error(res, 400, 'Datos incorrectos - DNI');
 
         // Se verifica el password
         const validPassword = bcryptjs.compareSync(password, usuarioDB.password);
-        if(!validPassword) return error(res, 400, 'Datos incorrectos');
+        if(!validPassword) return error(res, 400, 'Datos incorrectos - Password');
 
         // Se genera el token
         const token = await generarJWT(usuarioDB.id);
@@ -32,15 +32,18 @@ const login = async (req, res) => {
 
 const renewToken = async (req, res) => {
     try{
-        const uid = req.uid;
-        console.log(uid);
-        const token = await generarJWT(uid);
-        const usuario = await Usuario.findById(uid);
+        const uid = req.uid;    // Se obtiene luego de pasar por el middleware -> validarJWT
+        
+        const [token, usuario] = await Promise.all([
+            generarJWT(uid),
+            Usuario.findById(uid)
+        ])
 
         success(res,{
             token,
             usuario
-        })
+        });
+
     }catch(err){
         console.log(chalk.red(err));
         error(res, 500);

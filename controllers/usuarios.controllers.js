@@ -6,6 +6,8 @@ const { generarJWT } = require('../helpers/jwt');
 
 const listarUsuarios = async (req, res) => {
 
+    console.log(req.uid);
+
     const desde = Number(req.query.desde) || 0;    
     
     try{
