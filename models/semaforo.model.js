@@ -19,7 +19,7 @@ const semaforoSchema = Schema({
         required: true
     },
 
-    usuario:{
+    usuario: {
         required: true,
         type: Schema.Types.ObjectId,
         ref: 'Usuario'
