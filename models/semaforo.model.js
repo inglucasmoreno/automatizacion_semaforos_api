@@ -16,7 +16,8 @@ const semaforoSchema = Schema({
 
     intermitente: {
         type: Boolean,
-        required: true
+        required: true,
+        default: false
     },
 
     usuario: {

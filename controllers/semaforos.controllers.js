@@ -2,15 +2,32 @@ const Semaforo = require('../models/semaforo.model');
 const { success, error } = require('../controllers/response');
 const chalk = require('chalk');
 
+const getSemaforo = async (req, res) => {
+    const id = req.params.id;
+    try{
+        const semaforo = await Semaforo.findById(id)
+                                       .populate('usuario', 'dni apellido nombre email');
+        if(!semaforo){
+            return error(res, 404, 'El semaforo no existe');
+        }    
+        success(res,{ semaforo });
+    }catch(err){
+        console.log(chalk.red(err));
+        error(res, 500);
+    }
+}
+
 const listarSemaforos = async (req, res) => {
     const desde = Number(req.query.desde) || 0;
+    const limit = Number(req.query.limit) || 0;
     try{
         
         const [semaforos, total] = await Promise.all([
             Semaforo.find({},'codigo descripcion intermitente usuario activo')
                     .populate('usuario', 'dni apellido nombre email')
                     .skip(desde)
-                    .limit(3),
+                    .limit(limit)
+                    .sort({codigo: 1}),
             Semaforo.find().countDocuments()
         ])
 
@@ -91,6 +108,7 @@ const eliminarSemaforo = async  (req, res) => {
 
 
 module.exports = {
+    getSemaforo,
     listarSemaforos,
     nuevoSemaforo,
     actualizarSemaforo,
