@@ -40,7 +40,7 @@ const usuarioSchema = Schema({
     },
     
     activo: {
-        type: String,
+        type: Boolean,
         default: true
     }
 
