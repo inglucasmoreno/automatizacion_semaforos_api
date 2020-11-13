@@ -7,13 +7,14 @@ const { generarJWT } = require('../helpers/jwt');
 const listarUsuarios = async (req, res) => {
 
     const desde = Number(req.query.desde) || 0;
-    const hasta = Number(req.query.hasta) || 0;    
+    const limit = Number(req.query.limit) || 0;    
     
     try{
         const [usuarios, total] = await Promise.all([
             Usuario.find({}, 'dni nombre apellido role email activo')
                    .skip(desde)
-                   .limit(hasta),
+                   .limit(limit)
+                   .sort({apellido: 1}),
             Usuario.countDocuments()   
         ])
         success(res, {usuarios, total});
