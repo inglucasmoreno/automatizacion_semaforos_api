@@ -4,6 +4,17 @@ const { success, error } = require('./response');
 const bcryptjs = require('bcryptjs');
 const { generarJWT } = require('../helpers/jwt');
 
+const getUsuario = async (req, res) => {
+    const id = req.params.id;
+    try{
+        const usuario = await Usuario.findById(id, 'dni nombre apellido role email activo');
+        success(res, {usuario});
+    }catch(err){
+        console.log(chalk.red(err));
+        error(res, 500);    
+    }
+}
+
 const listarUsuarios = async (req, res) => {
 
     const desde = Number(req.query.desde) || 0;
@@ -33,7 +44,6 @@ const nuevoUsuario = async (req, res) => {
         const existeUsuario = await Usuario.findOne({ dni });
         if(existeUsuario) return error(res, 400, 'El usuario ya existe');     
         
-
         // El Correo existe en la base?
         const existeEmail = await Usuario.findOne({ email });
         if(existeEmail) return error(res, 400, 'Este correo ya esta en uso');
@@ -60,20 +70,35 @@ const nuevoUsuario = async (req, res) => {
 }
 
 const actualizarUsuario = async (req, res) => {
-    
+    const { dni, email, password } = req.body; 
     try{
         // Se verifica que el usuario existe en la BD
         const uid = req.params.id;
         const usuarioDB = await Usuario.findById(uid);
         if(!usuarioDB) return error(res, 404, 'El usuario no existe');
         
-        // Se extraen los campos a actualizar
-        const { dni, password, email ,...campos } = req.body;
+        // Se verifica si el DNI ya esta registrado
+        if(dni !==  usuarioDB.dni){
+            const dniExiste = await Usuario.findOne({dni});
+            if(dniExiste) return error(res, 400, 'Ese DNI ya esta registrado');
+        }
+        
+        // Se verifica si el Correo ya esta registrado
+        if(email !==  usuarioDB.email){
+            const emailExiste = await Usuario.findOne({email});
+            if(emailExiste) return error(res, 400, 'Ese email ya esta registrado');
+        }
+        
+        // Se encripta el password en caso de que sea necesario
+        if(password){   
+            const salt = bcryptjs.genSaltSync();
+            req.body.password = bcryptjs.hashSync(password, salt);
+        }
 
         // Se actualiza el usuario
-        const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, {new: true});
+        const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, req.body, {new: true});
         success(res, usuarioActualizado);
-
+        
     }catch(err){
         console.log(chalk.red(err));
         error(res, 500);
@@ -102,6 +127,7 @@ const eliminarUsuario = async (req, res) => {
 } 
 
 module.exports = {
+    getUsuario,
     listarUsuarios,
     nuevoUsuario,
     actualizarUsuario,

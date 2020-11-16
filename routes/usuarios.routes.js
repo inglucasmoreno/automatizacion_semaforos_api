@@ -3,6 +3,7 @@ const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const {
+    getUsuario,
     listarUsuarios,
     nuevoUsuario,
     actualizarUsuario,
@@ -12,6 +13,7 @@ const {
 const router = Router();
 
 router.get('/', validarJWT, listarUsuarios);
+router.get('/:id', validarJWT, getUsuario);
 router.post('/', [
     validarJWT,
     check('dni', 'El dni es obligatorio').not().isEmpty(),
