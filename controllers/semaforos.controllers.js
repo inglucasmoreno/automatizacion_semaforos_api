@@ -18,17 +18,32 @@ const getSemaforo = async (req, res) => {
 }
 
 const listarSemaforos = async (req, res) => {
+
     const desde = Number(req.query.desde) || 0;
     const limit = Number(req.query.limit) || 0;
+    const filtroActivo = req.query.activo || '';
+    const filtroIntermitente = req.query.intermitente || '';
+    const filtroDescripcion = req.query.descripcion || '';
+
     try{
+
+        const busqueda = {}
+        if(filtroActivo) busqueda.activo = filtroActivo;
+        if(filtroIntermitente) busqueda.intermitente = filtroIntermitente;
+        if(filtroDescripcion) {
+            const regex = new RegExp(filtroDescripcion, 'i');
+            busqueda.descripcion = regex;
+        }
         
+        // console.log(busqueda);
+
         const [semaforos, total] = await Promise.all([
-            Semaforo.find({},'codigo descripcion intermitente usuario activo')
+            Semaforo.find(busqueda,'codigo descripcion intermitente usuario activo')
                     .populate('usuario', 'dni apellido nombre email')
                     .skip(desde)
                     .limit(limit)
                     .sort({codigo: 1}),
-            Semaforo.find().countDocuments()
+            Semaforo.find(busqueda).countDocuments()
         ])
 
         success(res, { semaforos, total });

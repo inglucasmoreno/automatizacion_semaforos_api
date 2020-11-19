@@ -19,14 +19,22 @@ const listarUsuarios = async (req, res) => {
 
     const desde = Number(req.query.desde) || 0;
     const limit = Number(req.query.limit) || 0;    
-    
+    const filtroActivo = req.query.activo || '';                // Para buscar usuarios activos/inactivos
+    const filtroDni = req.query.dni || ''; 
+
     try{
+        const busqueda = {};
+        if(filtroActivo) busqueda.activo = filtroActivo;
+        if(filtroDni){
+            const regex = new RegExp(filtroDni, 'i');      // Expresion regular para busqueda insensible
+            busqueda.dni = regex;
+        }
         const [usuarios, total] = await Promise.all([
-            Usuario.find({}, 'dni nombre apellido role email activo')
+            Usuario.find(busqueda, 'dni nombre apellido role email activo')
                    .skip(desde)
                    .limit(limit)
                    .sort({apellido: 1}),
-            Usuario.countDocuments()   
+            Usuario.find(busqueda).countDocuments()   
         ])
         success(res, {usuarios, total});
     }catch(err){
